@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Entered addresses</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 1400px;
+            /* Adjust height as needed */
+            width: 1400px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Entered addresses</h1>
+    <ul>
+        {% for entry in entries %}
+        <li>
+            {{ entry.text }}
+            <form action="{% url 'delete_text_entry' entry.id %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="/"> <button> Add another address</button></a>
+
+    <form action="{% url 'text_entry_success' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" name="process_text">Find route</button>
+    </form>
+
+    <!-- Map container -->
+    <div id="map"></div>
+
+    <!-- Button to trigger processing -->
+
+
+    <!-- Leaflet map initialization script -->
+    <script>
+        // Initialize the map and set its view to your chosen geographical coordinates and a zoom level
+        var geojson = document.getElementById("geojson");
+        var map = L.map('map').setView([52.25, 21.01], 11);
+        // Load and display tile layers on the map
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+
+    </script>
+    {% if geojson %}
+    <div id="geojson-data" data-geojson='{{ geojson }}'></div>
+    <div id="coords-data" data-coords='{{ last_coords}}'></div>
+    <script>
+        var geojsonElement = document.getElementById('geojson-data');
+        var geo = geojsonElement.getAttribute('data-geojson');
+        var geojson = JSON.parse(geo.replace(/"/g, '').replace(/'/g, '"'));
+
+        if (geojson["type"] == "error") {
+            window.alert(geojson["message"]);
+        }
+        else {
+            var coordsElement = document.getElementById('coords-data');
+            var last_coords = coordsElement.getAttribute('data-coords');
+            var last_coords_json = JSON.parse(last_coords.replace(/'/g, '"'));
+            var coordinates = [];
+            for (var i = 0; i < geojson['features'].length; i++) {
+                coordinates.push(geojson['features'][i]['geometry']['coordinates']);
+            }
+            var last_coords = [];
+            for (var i = 0; i < last_coords_json['features'].length; i++) {
+                var point = {
+                    "type": "Point",
+                    "coordinates": last_coords_json['features'][i]['geometry']['coordinates']
+                };
+                L.marker(point['coordinates']).addTo(map);
+            }
+
+            var line = {
+                "type": "LineString",
+                "coordinates": coordinates
+            };
+
+            var jsonLayer = L.geoJSON(line).addTo(map);
+            map.fitBounds(jsonLayer.getBounds());
+        };
+    </script>
+    {% endif %}
+</body>
+
+</html>

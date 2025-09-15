@@ -1,0 +1,6 @@
+networkx>=3.5
+pyrosm
+osmnx==1.9.3
+geopandas
+django==4.1
+numpy
