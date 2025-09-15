@@ -67,7 +67,7 @@ Follow the steps below to set up and run the application locally:
 9. **Go to http://127.0.0.1:8000**
 
 ## How to use the app
-Enter your starting address (Note: all addresses must be located within the Warsaw agglomeration)
+Enter your starting address (Note: all addresses must be located within the Warsaw agglomeration and entered in the standard format, e.g. Freta 12, Warszawa).
 
 Add additional addresses to build the route.
 
