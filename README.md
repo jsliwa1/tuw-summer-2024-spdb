@@ -35,8 +35,6 @@ W ramach eksperymentów:
 - porównano wyniki algorytmu **Nearest Neighbor** z algorytmem brutalnym,  
 - oceniono jakość i czas działania aplikacji dla różnych zestawów punktów.  
 
-Politechnika Warszawska, 2024  
-
 ---
 
 ## How to run the app
